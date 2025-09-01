@@ -16,87 +16,101 @@
 ## Требования
 
 - QGIS 3.x установленный на системе
-- Python 3.x
-- PyQt5
+- Python 3.9+ (с поддержкой современных типов аннотации)
+- Poetry для управления зависимостями
+- ruff для форматирования и линтинга кода
 
-## Установка зависимостей
+## Установка проекта
 
-Для установки PyQt5 через Poetry:
+1. **Клонируйте репозиторий:**
+   ```bash
+   git clone <repository-url>
+   cd qgis-add-parity-from-fields
+   ```
+
+2. **Установите зависимости через Poetry:**
+   ```bash
+   make install
+   ```
+
+3. **Убедитесь, что QGIS установлен на системе**
+
+## Использование Make команд
+
+Проект включает удобный Makefile для автоматизации задач разработки:
+
+### Основные команды
+
+- **`make help`** - показать все доступные команды
+- **`make format`** - форматирование кода с помощью ruff
+- **`make lint`** - проверка кода на ошибки
+- **`make check`** - полная проверка (lint + format check)
+- **`make fix`** - автоматическое исправление проблем
+- **`make clean`** - очистка временных файлов
+
+### Запуск скрипта
+
+- **`make run`** - запуск скрипта с примером данных (data/city.gpkg)
+- **`make run-help`** - показать справку по использованию скрипта
+
+### Примеры использования
 
 ```bash
-poetry install
-poetry add PyQt5
+# Установка зависимостей
+make install
+
+# Форматирование и проверка кода
+make format
+make lint
+
+# Запуск с примером данных
+make run
+
+# Получение справки по скрипту
+make run-help
+
+# Полная проверка перед коммитом
+make check
 ```
 
-## Запуск скрипта
+## Прямой запуск скрипта
 
-### Windows
+Если вы хотите запустить скрипт напрямую с собственными данными:
 
-1. Откройте OSGeo4W Shell (поставляется с QGIS)
-2. Перейдите в директорию проекта:
-   ```cmd
-   cd C:\path\to\qgis-add-parity-from-fields
-   ```
-3. Запустите скрипт с указанием пути к файлу:
-   ```cmd
-   python src/add_parity_from_all_fields.py data/city.gpkg
-   python src/add_parity_from_all_fields.py C:\path\to\your\layer.gpkg
-   ```
-
-### macOS
-
-1. Откройте Terminal
-2. Перейдите в директорию проекта:
-   ```bash
-   cd /path/to/qgis-add-parity-from-fields
-   ```
-3. Запустите скрипт через Python из QGIS:
-   ```bash
-   /Applications/QGIS-LTR.app/Contents/MacOS/bin/python3 src/add_parity_from_all_fields.py data/city.gpkg
-   /Applications/QGIS-LTR.app/Contents/MacOS/bin/python3 src/add_parity_from_all_fields.py /path/to/your/layer.gpkg
-   ```
-
-### Linux (Ubuntu/Debian)
-
-1. Откройте Terminal
-2. Перейдите в директорию проекта:
-   ```bash
-   cd /path/to/qgis-add-parity-from-fields
-   ```
-3. Запустите скрипт:
-   ```bash
-   python3 src/add_parity_from_all_fields.py data/city.gpkg
-   python3 src/add_parity_from_all_fields.py /path/to/your/layer.gpkg
-   ```
-
-Или если QGIS установлен в нестандартном месте:
 ```bash
-/usr/bin/python3 src/add_parity_from_all_fields.py data/city.gpkg
-```
+# Через QGIS Python (рекомендуется)
+/Applications/QGIS-LTR.app/Contents/MacOS/bin/python3 src/add_parity_from_all_fields.py your_data.gpkg
 
-### Справка по параметрам
+# Или через системный Python (если настроены пути к QGIS)
+python3 src/add_parity_from_all_fields.py your_data.gpkg
 
-Для получения справки по использованию:
-```bash
-python src/add_parity_from_all_fields.py --help
+# Справка по параметрам
+python3 src/add_parity_from_all_fields.py --help
 ```
 
 ## Структура проекта
 
 ```
 qgis-add-parity-from-fields/
-├── data/
-│   ├── city.gpkg          # Входной векторный слой
+├── data/                           # Тестовые данные
+│   ├── city.gpkg                   # Основной тестовый слой
 │   ├── lakes.gpkg
 │   ├── rastr.tif
 │   └── roads.gpkg
-├── src/
-│   ├── process_city_layer.py      # Старый скрипт (только для city.gpkg)
-│   └── add_parity_from_all_fields.py  # Универсальный скрипт
-├── pyproject.toml
-├── poetry.lock
-└── README.md
+├── src/                            # Исходный код
+│   └── add_parity_from_all_fields.py  # Универсальный скрипт с типами
+├── Makefile                        # Автоматизация задач разработки
+├── pyproject.toml                  # Конфигурация Poetry
+├── poetry.lock                     # Зафиксированные версии зависимостей
+└── README.md                       # Документация
 ```
+
+## Особенности кода
+
+- **Модульная архитектура** - код разбит на специализированные функции
+- **Типы аннотации** - современные типы для всех функций
+- **Автоматическое форматирование** - ruff для поддержания стиля кода
+- **Подробное логирование** - информация о каждом этапе обработки
 
 ## Результат работы
 
@@ -116,4 +130,22 @@ qgis-add-parity-from-fields/
 - **"Файл не найден"** - убедитесь, что указанный файл .gpkg существует
 - **"В слое не найдено целочисленных полей"** - слой не содержит полей для обработки
 - **"ModuleNotFoundError: No module named 'qgis'"** - убедитесь, что используете Python из QGIS
+- **"TypeError: unsupported operand type(s) for |"** - используйте Python 3.9+ или установите typing_extensions
 - **"usage: add_parity_from_all_fields.py [-h] layer_path"** - не указан путь к файлу
+
+## Разработка
+
+Для разработки рекомендуется использовать Make команды:
+
+```bash
+# Перед началом работы
+make install
+
+# Во время разработки
+make format  # форматирование
+make lint    # проверка ошибок
+make run     # тестирование
+
+# Перед коммитом
+make check   # полная проверка
+```

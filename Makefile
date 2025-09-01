@@ -22,6 +22,7 @@ help:
 	@echo "  $(YELLOW)make fix$(NC)        - Автоматическое исправление проблем"
 	@echo "  $(YELLOW)make install$(NC)    - Установка зависимостей через Poetry"
 	@echo "  $(YELLOW)make run$(NC)        - Запуск скрипта с примером данных"
+	@echo "  $(YELLOW)make run-help$(NC)   - Показать справку по скрипту"
 	@echo "  $(YELLOW)make clean$(NC)      - Очистка временных файлов"
 	@echo "  $(YELLOW)make help$(NC)       - Показать эту справку"
 
@@ -58,8 +59,18 @@ install:
 
 # Запуск скрипта с примером данных
 run:
-	@echo "$(GREEN)Запуск скрипта с данными city.gpkg...$(NC)"
-	/Applications/QGIS-LTR.app/Contents/MacOS/bin/python3 $(SRC_DIR)/add_parity_from_all_fields.py data/city.gpkg
+	@if [ "$(filter --help,$(MAKECMDGOALS))" ]; then \
+		echo "$(GREEN)Справка по использованию скрипта:$(NC)"; \
+		/Applications/QGIS-LTR.app/Contents/MacOS/bin/python3 $(SRC_DIR)/add_parity_from_all_fields.py --help; \
+	else \
+		echo "$(GREEN)Запуск скрипта с данными city.gpkg...$(NC)"; \
+		/Applications/QGIS-LTR.app/Contents/MacOS/bin/python3 $(SRC_DIR)/add_parity_from_all_fields.py data/city.gpkg; \
+	fi
+
+# Показать справку по скрипту
+run-help:
+	@echo "$(GREEN)Справка по использованию скрипта:$(NC)"
+	/Applications/QGIS-LTR.app/Contents/MacOS/bin/python3 $(SRC_DIR)/add_parity_from_all_fields.py --help
 
 # Очистка временных файлов
 clean:
