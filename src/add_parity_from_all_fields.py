@@ -1,4 +1,7 @@
 import os
+
+os.environ['PROJ_LIB'] = '/Applications/QGIS-LTR.app/Contents/Resources/proj'
+
 import sys
 import argparse
 from typing import Optional
@@ -6,6 +9,7 @@ from qgis.core import (
     QgsVectorLayer,
     QgsField,
     QgsFeature,
+    QgsApplication,
 )
 
 from PyQt5.QtCore import QVariant
@@ -312,35 +316,42 @@ def main() -> None:
     """
     Главная функция для запуска скрипта
     """
-    parser = argparse.ArgumentParser(
-        description="Добавляет поля parity для всех целочисленных полей в векторном слое",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
+    qgs = QgsApplication([], False)
+    qgs.initQgis()
+
+    try:
+        parser = argparse.ArgumentParser(
+            description="Добавляет поля parity для всех целочисленных полей в векторном слое",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""
 Примеры использования:
   python add_parity_from_all_fields.py data/city.gpkg
   python add_parity_from_all_fields.py /path/to/your/layer.gpkg
-        """,
-    )
+            """,
+        )
 
-    parser.add_argument("layer_path", help="Путь к файлу .gpkg для обработки")
+        parser.add_argument("layer_path", help="Путь к файлу .gpkg для обработки")
 
-    args = parser.parse_args()
+        args = parser.parse_args()
 
-    print("=== Обработка векторного слоя ===")
-    print(f"Файл: {args.layer_path}")
-    print(
-        "Создание полей 'parity-{field_name}' на основе четности значений всех целочисленных полей"
-    )
-    print()
+        print("=== Обработка векторного слоя ===")
+        print(f"Файл: {args.layer_path}")
+        print(
+            "Создание полей 'parity-{field_name}' на основе четности значений всех целочисленных полей"
+        )
+        print()
 
-    # Запускаем обработку
-    success = process_vector_layer(args.layer_path)
+        # Запускаем обработку
+        success = process_vector_layer(args.layer_path)
 
-    if success:
-        print("\n=== Обработка завершена успешно! ===")
-    else:
-        print("\n=== Обработка завершена с ошибками! ===")
-        sys.exit(1)
+        if success:
+            print("\n=== Обработка завершена успешно! ===")
+        else:
+            print("\n=== Обработка завершена с ошибками! ===")
+            sys.exit(1)
+
+    finally:
+        qgs.exitQgis()
 
 
 # Запуск скрипта
