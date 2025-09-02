@@ -341,7 +341,6 @@ def main() -> None:
         )
         print()
 
-        # Запускаем обработку
         success = process_vector_layer(args.layer_path)
 
         if success:
